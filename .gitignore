@@ -1,0 +1,18 @@
+# Données brutes — ne pas versionner (trop lourdes)
+data/raw/
+
+# Données traitées intermédiaires
+data/processed/
+
+# Outputs
+data/outputs/
+
+# RStudio
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# OS
+.DS_Store
+Thumbs.db
