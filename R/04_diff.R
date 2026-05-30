@@ -31,7 +31,24 @@ calculer_diff <- function(code_dept) {
   )
   message("   📂 Intersection B chargée — ", nrow(inter_B), " features")
   
-  # 2. Niveau 2 — détail par canton × code_cs
+  # 2. Niveau 3 — détail par canton × code_cs x code_us
+  niveau_3 <- bind_rows(
+    inter_A |> st_drop_geometry() |> mutate(millesime = "A"),
+    inter_B |> st_drop_geometry() |> mutate(millesime = "B")
+  ) |>
+    group_by(code_insee, code_cs, code_us, millesime) |>
+    summarise(aire_m2 = sum(aire_m2), .groups = "drop") |>
+    pivot_wider(
+      names_from   = millesime,
+      values_from  = aire_m2,
+      names_prefix = "aire_"
+    ) |>
+    mutate(delta = aire_B - aire_A)
+  
+  message("   📊 Niveau 3 calculé — ", nrow(niveau_3), " lignes")
+  
+  
+  # 3. Niveau 2 — détail par canton × code_cs
   niveau_2 <- bind_rows(
     inter_A |> st_drop_geometry() |> mutate(millesime = "A"),
     inter_B |> st_drop_geometry() |> mutate(millesime = "B")
@@ -47,7 +64,7 @@ calculer_diff <- function(code_dept) {
   
   message("   📊 Niveau 2 calculé — ", nrow(niveau_2), " lignes")
   
-  # 3. Niveau 1 — agrégat artificiel/naturel par canton
+  # 4. Niveau 1 — agrégat artificiel/naturel par canton
   niveau_1 <- niveau_2 |>
     mutate(type_cs = case_when(
       code_cs %in% terrain_artificiel ~ "artificiel",
@@ -64,10 +81,14 @@ calculer_diff <- function(code_dept) {
   
   message("   📊 Niveau 1 calculé — ", nrow(niveau_1), " lignes")
   
-  # 4. Sauvegarde
+  
+  # 5. Sauvegarde
   chemin_sortie <- str_glue("data/processed/diff/diff_dep{code_dept}.gpkg")
   
   con <- dbConnect(RSQLite::SQLite(), chemin_sortie)
+  
+  dbWriteTable(con, "niveau_3", niveau_3, overwrite = TRUE)
+  message("   💾 Niveau 3 sauvegardé")
   
   dbWriteTable(con, "niveau_2", niveau_2, overwrite = TRUE)
   message("   💾 Niveau 2 sauvegardé")
