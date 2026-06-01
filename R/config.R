@@ -26,6 +26,11 @@ terrain_artificiel <- c("CS1.1.1.1", "CS1.1.1.2", "CS1.1.2.1", "CS1.1.2.2")
 terrain_nature <- c("CS1.2.2",   "CS2.1.1.1", "CS2.1.1.2", "CS2.1.1.3",
                     "CS2.1.2",   "CS2.1.3",   "CS2.2.1",   "CS2.2.2")
 
+# Codes CS — forêts et herbacés (pour analyse 5b)
+cs_forets <- c("CS2.1.1.1", "CS2.1.1.2", "CS2.1.1.3")
+cs_herbaces <- c("CS2.2.1")
+cs_nature_5b <- c(cs_forets, cs_herbaces)
+
 
 # === PARAMÈTRES D'ANALYSE ===
 
@@ -43,6 +48,8 @@ code_pseudo_canton_lyon  <- "9999"
 code_canton_paris <- "7500"
 code_canton_lyon  <- "6999"
 
+# Label pour polygones sans correspondance dans le différentiel IGN
+label_disparu <- "fusionné/redécoupé"
 
 # === COLONNES CLÉS ===
 
