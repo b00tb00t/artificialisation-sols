@@ -46,3 +46,32 @@ trouver_millesimes <- function(chemin_dept) {
     annee_B     = annees[2]
   ))
 }
+
+
+# -----------------------------------------------------------------------------
+# trouver_diff_ign()
+# Trouve automatiquement le fichier différentiel IGN dans un dossier département
+#
+# Argument : chemin_dept (character) — chemin vers le dossier du département
+# Retourne : chemin complet vers le fichier DIFF .gpkg
+# -----------------------------------------------------------------------------
+
+trouver_diff_ign <- function(chemin_dept) {
+  fichiers <- list.files(
+    chemin_dept,
+    pattern    = "\\.gpkg$",
+    recursive  = TRUE,
+    full.names = TRUE
+  ) |>
+    str_subset("DIFF")
+  
+  if (length(fichiers) == 0) {
+    stop("Aucun fichier DIFF trouvé dans : ", chemin_dept)
+  }
+  
+  if (length(fichiers) != 1) {
+    stop("Plusieurs fichiers DIFF trouvés dans : ", chemin_dept)
+  }
+  
+  return(fichiers[1])
+}
