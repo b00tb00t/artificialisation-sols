@@ -1,0 +1,24 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Artificialisation des Sols en France"
+  navbar:
+    left:
+      - href: index.qmd
+        text: "Accueil"
+      - href: methodologie.qmd
+        text: "Méthodologie"
+      - href: resultats.qmd
+        text: "Résultats"
+      - href: apropos.qmd
+        text: "À propos"
+  page-footer:
+    center: "Données : OCS GE NG — IGN | INSEE | Traitement : R"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    lang: fr
