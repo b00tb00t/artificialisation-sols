@@ -69,20 +69,16 @@ masker_departement <- function(code_dept) {
   }
   
   # 5. Sauvegarder
-  st_write(
-    intersection_A,
-    str_glue("data/processed/intersections/intersection_dep{code_dept}_A.gpkg"),
-    delete_if_exists = TRUE,
-    quiet = TRUE
-  )
+  # Sauvegarder intersection A
+  chemin_A <- str_glue("data/processed/intersections/intersection_dep{code_dept}_A.gpkg")
+  if (file.exists(chemin_A)) file.remove(chemin_A)
+  st_write(intersection_A, chemin_A, quiet = TRUE)
   message("   💾 Intersection A sauvegardée")
   
-  st_write(
-    intersection_B,
-    str_glue("data/processed/intersections/intersection_dep{code_dept}_B.gpkg"),
-    delete_if_exists = TRUE,
-    quiet = TRUE
-  )
+  # Sauvegarder intersection B
+  chemin_B <- str_glue("data/processed/intersections/intersection_dep{code_dept}_B.gpkg")
+  if (file.exists(chemin_B)) file.remove(chemin_B)
+  st_write(intersection_B, chemin_B, quiet = TRUE)
   message("   💾 Intersection B sauvegardée")
   
   return(paste("✅ Département", code_dept, "traité et sauvegardé"))

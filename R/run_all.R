@@ -157,7 +157,7 @@ message(strrep("=", 50))
 log_global |>
   filter(etape == "complet") |>
   count(statut) |>
-  walk(\(row) message(row$statut, " : ", row$n, " départements"))
+  purrr::pwalk(\(statut, n) message(statut, " : ", n, " départements"))
 
 message("\n Log complet → ", log_path)
 message("🎉 run_all.R terminé")

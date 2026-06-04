@@ -64,7 +64,11 @@ cantons_complets <- bind_rows(ade_cantons, canton_paris_harmonise, canton_lyon_h
 message("✅ Cantons complets — ", nrow(cantons_complets), " features (", 
         nrow(ade_cantons), " + Paris + Lyon)")
 
+# Supprimer le fichier existant avant réécriture
+if (file.exists("data/processed/cantons_complets/cantons_complets.gpkg")) {
+  file.remove("data/processed/cantons_complets/cantons_complets.gpkg")
+}
+
 st_write(cantons_complets, 
-         "data/processed/cantons_complets/cantons_complets.gpkg", 
-         delete_if_exists = TRUE)
+         "data/processed/cantons_complets/cantons_complets.gpkg")
 message("✅ Sauvegardé → data/processed/cantons_complets/cantons_complets.gpkg")

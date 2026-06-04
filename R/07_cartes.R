@@ -13,6 +13,7 @@ library(stringr)
 library(purrr)
 library(DBI)
 library(RSQLite)
+library(here)
 
 tmap_mode("view")
 
@@ -47,21 +48,37 @@ agregats_wide <- tous_agregats |>
     values_from = c(aire_A_ha, aire_B_ha, delta_ha, delta_pct)
   )
 
-# Jointure géométries × données
-cantons_carte <- cantons_complets |>
-  select(code_insee, code_insee_du_departement, geom) |>
-  left_join(agregats_wide, by = "code_insee")
+message("✅ Données assemblées — ", nrow(cantons_pilotes), " cantons")
 
-# Filtrer départements pilotes
+# Référentiel département → région avec noms
+ref_dept_region <- st_read(chemin_ade, layer = "departement", quiet = TRUE) |>
+  st_drop_geometry() |>
+  select(
+    code_insee_du_departement = code_insee,
+    nom_departement           = nom_officiel,
+    code_region               = code_insee_de_la_region
+  ) |>
+  left_join(
+    st_read(chemin_ade, layer = "region", quiet = TRUE) |>
+      st_drop_geometry() |>
+      select(code_region = code_insee, nom_region = nom_officiel),
+    by = "code_region"
+  )
+
+# Jointure sur cantons_carte — version finale avec tout
+cantons_carte <- cantons_complets |>
+  select(code_insee, code_insee_du_departement, nom_officiel, geom) |>
+  left_join(agregats_wide, by = "code_insee") |>
+  left_join(ref_dept_region, by = "code_insee_du_departement")
+
+# Filtrer APRÈS la jointure complète
 cantons_pilotes <- cantons_carte |>
   filter(code_insee_du_departement %in% dpt_pilotes)
-
-message("✅ Données assemblées — ", nrow(cantons_pilotes), " cantons")
 
 # === FONCTION CHOROPLÈTHE GÉNÉRIQUE ===
 
 faire_choroplèthe <- function(data, variable, palette, titre,
-                              titre_legende, fichier) {
+                              titre_legende, fichier, popup_vars) {
   carte <- tm_shape(data) +
     tm_polygons(
       fill        = variable,
@@ -70,7 +87,9 @@ faire_choroplèthe <- function(data, variable, palette, titre,
         style  = "jenks",
         n      = 5
       ),
-      fill.legend = tm_legend(title = titre_legende)
+      fill.legend = tm_legend(title = titre_legende),
+      id          = "nom_officiel",
+      popup.vars  = popup_vars
     ) +
     tm_shape(departements) +
     tm_borders(col = "grey40", lwd = 1.5) +
@@ -94,7 +113,14 @@ faire_choroplèthe(
   palette       = "brewer.reds",
   titre         = "Évolution de l'artificialisation des sols",
   titre_legende = "% de variation",
-  fichier       = "data/outputs/cartes/carte_1_artificialisation.html"
+  fichier       = here("data/outputs/cartes/carte_1_artificialisation.html"),
+  popup_vars    = c("nom_officiel",
+                    "nom_departement",
+                    "nom_region",
+                    "aire_A_ha_artificiel",
+                    "aire_B_ha_artificiel", 
+                    "delta_ha_artificiel",
+                    "delta_pct_artificiel")
 )
 
 faire_choroplèthe(
@@ -103,7 +129,14 @@ faire_choroplèthe(
   palette       = "brewer.greens",
   titre         = "Évolution de la renaturation",
   titre_legende = "% de variation",
-  fichier       = "data/outputs/cartes/carte_2_renaturation.html"
+  fichier       = here("data/outputs/cartes/carte_2_renaturation.html"),
+  popup_vars    = c("nom_officiel",
+                    "nom_departement",
+                    "nom_region",
+                    "aire_A_ha_naturel",
+                    "aire_B_ha_naturel",
+                    "delta_ha_naturel",
+                    "delta_pct_naturel")
 )
 
 # === CARTE 3 — CERCLES PROPORTIONNELS ===
@@ -195,6 +228,6 @@ carte_3 <-
              position = c("left", "bottom"))
 
 tmap_save(carte_3,
-          "data/outputs/cartes/carte_3_cercles.html",
+          here("data/outputs/cartes/carte_3_cercles.html"),
           selfcontained = FALSE)
 message("✅ Carte 3 sauvegardée")
