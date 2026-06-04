@@ -18,8 +18,8 @@ library(dplyr)
 # =============================================================================
 
 # Liste complète des départements métropole
-depts_numeriques <- str_pad(c(1:19, 21:95), 3, "left", "0")
-tous_depts       <- c(depts_numeriques, "02A", "02B")
+depts_numeriques <- as.character(c(1:19, 21:95))
+tous_depts       <- c(depts_numeriques, "2A", "2B")
 
 # Années à tester
 annees_a_tester  <- 2016:2023
@@ -34,25 +34,33 @@ url_pattern <- paste0(
 # Log téléchargements
 log_dl_path <- "data/outputs/log_telechargements.csv"
 
+log_dl <- tibble(
+  code_dept = character(),
+  annee     = integer(),
+  statut    = character(),
+  fichier   = character(),
+  timestamp = character()
+)
+
 if (file.exists(log_dl_path)) {
-  log_dl <- read_csv(log_dl_path, show_col_types = FALSE)
-} else {
-  log_dl <- tibble(
-    code_dept  = character(),
-    annee      = integer(),
-    statut     = character(),
-    fichier    = character(),
-    timestamp  = character()
-  )
+  log_dl <- read_csv(log_dl_path, 
+                     show_col_types = FALSE,
+                     col_types = cols(
+                       code_dept = col_character(),
+                       annee     = col_integer(),
+                       statut    = col_character(),
+                       fichier   = col_character(),
+                       timestamp = col_character()
+                     ))
 }
 
 logger_dl <- function(code_dept, annee, statut, fichier = "") {
   log_dl <<- bind_rows(log_dl, tibble(
-    code_dept = code_dept,
-    annee     = annee,
-    statut    = statut,
-    fichier   = fichier,
-    timestamp = format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+    code_dept = as.character(code_dept),
+    annee     = as.integer(annee),
+    statut    = as.character(statut),
+    fichier   = as.character(fichier),
+    timestamp = as.character(format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
   ))
   write_csv(log_dl, log_dl_path)
 }
@@ -66,7 +74,7 @@ telecharger_departement <- function(code_dept) {
   message("\n🔄 Département : ", code_dept)
   
   # Dossier destination
-  dossier_dest <- file.path(chemin_ocsge, paste0("dep_", as.integer(code_dept)))
+  dossier_dest <- file.path(chemin_ocsge, paste0("dep_", code_dept))
   dir.create(dossier_dest, recursive = TRUE, showWarnings = FALSE)
   
   # Vérifier si déjà téléchargé (2 millésimes présents)
@@ -166,7 +174,7 @@ telecharger_departement <- function(code_dept) {
 # walk(dpt_pilotes, telecharger_departement)
 
 # Pour tous les départements — décommenter quand prêt
-# walk(tous_depts, telecharger_departement)
+walk(tous_depts, telecharger_departement)
 
 message("\n🎉 Téléchargements terminés")
 message("📋 Log → ", log_dl_path)
