@@ -62,7 +62,7 @@ analyser_cs_us <- function(code_dept) {
     "data/processed/cantons_complets/cantons_complets.gpkg",
     quiet = TRUE
   ) |>
-    filter(code_insee_du_departement == code_dept)
+    filter(code_insee_du_departement == code_dept_vers_ade(code_dept))
   
   # Intersection différentiel IGN × cantons
   diff_inter   <- st_intersection(diff_ign, cantons_dept)
@@ -110,5 +110,7 @@ analyser_cs_us <- function(code_dept) {
 
 # === EXÉCUTION SUR LES DÉPARTEMENTS PILOTES ===
 
-resultats <- map(dpt_pilotes, analyser_cs_us)
-walk(resultats, message)
+if (!exists("run_all_active")) {
+  resultats <- map(dpt_pilotes, masker_departement)
+  walk(resultats, message)
+}

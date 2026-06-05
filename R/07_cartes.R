@@ -120,7 +120,9 @@ faire_choroplèthe(
                     "aire_A_ha_artificiel",
                     "aire_B_ha_artificiel", 
                     "delta_ha_artificiel",
-                    "delta_pct_artificiel")
+                    "delta_pct_artificiel",
+                    "annee_A",
+                    "annee_B")
 )
 
 faire_choroplèthe(
@@ -136,7 +138,9 @@ faire_choroplèthe(
                     "aire_A_ha_naturel",
                     "aire_B_ha_naturel",
                     "delta_ha_naturel",
-                    "delta_pct_naturel")
+                    "delta_pct_naturel",
+                    "annee_A",
+                    "annee_B")
 )
 
 # === CARTE 3 — CERCLES PROPORTIONNELS ===

@@ -21,7 +21,7 @@ masker_departement <- function(code_dept) {
     "data/processed/cantons_complets/cantons_complets.gpkg",
     quiet = TRUE
   ) |>
-    filter(code_insee_du_departement == code_dept)
+    filter(code_insee_du_departement == code_dept_vers_ade(code_dept))
   message("   📍 ", nrow(cantons_dept), " cantons trouvés pour le département ", code_dept)
   
   # 2. Trouver et charger les millésimes OCS GE
@@ -86,5 +86,7 @@ masker_departement <- function(code_dept) {
 
 # === EXÉCUTION SUR LES DÉPARTEMENTS PILOTES ===
 
-resultats <- map(dpt_pilotes, masker_departement)
-walk(resultats, message)
+if (!exists("run_all_active")) {
+  resultats <- map(dpt_pilotes, masker_departement)
+  walk(resultats, message)
+}
