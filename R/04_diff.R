@@ -103,5 +103,7 @@ calculer_diff <- function(code_dept) {
 
 # === EXÉCUTION SUR LES DÉPARTEMENTS PILOTES ===
 
-resultats <- map(dpt_pilotes, calculer_diff)
-walk(resultats, message)
+if (!exists("run_all_active")) {
+  resultats <- map(dpt_pilotes, masker_departement)
+  walk(resultats, message)
+}

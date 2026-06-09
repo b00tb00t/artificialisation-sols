@@ -80,7 +80,7 @@ trouver_diff_ign <- function(chemin_dept) {
 # Convertit code département vers format Admin Express (zéro initial)
 code_dept_vers_ade <- function(code_dept) {
   case_when(
-    code_dept %in% c("2A", "2B") ~ paste0("0", code_dept),
+    code_dept %in% c("2A", "2B") ~ code_dept,  # Corse — format ADE sans zéro
     nchar(code_dept) == 1        ~ paste0("0", code_dept),
     TRUE                         ~ code_dept
   )

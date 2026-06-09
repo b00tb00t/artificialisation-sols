@@ -41,8 +41,9 @@ message("✅ Référentiel département-région chargé")
 # Niveau 1 — artificialisation/renaturation par canton
 tous_niveau_1 <- dpt_pilotes |>
   map_df(\(dept) {
-    con <- dbConnect(RSQLite::SQLite(),
-                     str_glue("data/processed/agregats/agregats_dep{dept}.gpkg"))
+    chemin <- str_glue("data/processed/agregats/agregats_dep{dept}.gpkg")
+    if (!file.exists(chemin)) return(NULL)   # ← chemin défini avant
+    con <- dbConnect(RSQLite::SQLite(), chemin)
     df  <- dbReadTable(con, "niveau_1")
     dbDisconnect(con)
     df |> mutate(code_dept = dept)
@@ -52,8 +53,9 @@ tous_niveau_1 <- dpt_pilotes |>
 # Niveau 2 — détail par canton × code_cs
 tous_niveau_2 <- dpt_pilotes |>
   map_df(\(dept) {
-    con <- dbConnect(RSQLite::SQLite(),
-                     str_glue("data/processed/agregats/agregats_dep{dept}.gpkg"))
+    chemin <- str_glue("data/processed/agregats/agregats_dep{dept}.gpkg")
+    if (!file.exists(chemin)) return(NULL)   # ← chemin défini avant
+    con <- dbConnect(RSQLite::SQLite(), chemin)
     df  <- dbReadTable(con, "niveau_2")
     dbDisconnect(con)
     df |> mutate(code_dept = dept)
@@ -63,8 +65,9 @@ tous_niveau_2 <- dpt_pilotes |>
 # CS×US
 tous_5a <- dpt_pilotes |>
   map_df(\(dept) {
-    con <- dbConnect(RSQLite::SQLite(),
-                     str_glue("data/processed/agregats/cs_us_dep{dept}.gpkg"))
+    chemin <- str_glue("data/processed/agregats/cs_us_dep{dept}.gpkg")
+    if (!file.exists(chemin)) return(NULL)   # ← chemin défini avant
+    con <- dbConnect(RSQLite::SQLite(), chemin)
     df  <- dbReadTable(con, "analyse_5a") |> mutate(code_dept = dept)
     dbDisconnect(con)
     df

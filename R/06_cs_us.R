@@ -57,12 +57,29 @@ analyser_cs_us <- function(code_dept) {
   diff_ign        <- st_read(chemin_diff_ign, quiet = TRUE)
   message("   📂 Différentiel IGN chargé — ", nrow(diff_ign), " features")
   
+  # Détecter dynamiquement les colonnes CS et US
+  cols_cs <- names(diff_ign) |> str_subset("^CS_\\d{4}$") |> sort()
+  cols_us <- names(diff_ign) |> str_subset("^US_\\d{4}$") |> sort()
+  
+  # Renommer vers des noms standardisés
+  diff_ign <- diff_ign |>
+    rename(
+      CS_2018 = !!cols_cs[1],
+      CS_2021 = !!cols_cs[2],
+      US_2018 = !!cols_us[1],
+      US_2021 = !!cols_us[2]
+    )
+  
+  message("   📋 Colonnes DIFF : ", cols_cs[1], "/", cols_cs[2],
+          " → renommées CS_2018/CS_2021")
+  
   # Charger les cantons du département
-  cantons_dept <- st_read(
+  code_dept_ade <- str_pad(code_dept, 2, "left", "0")
+  cantons_dept  <- st_read(
     "data/processed/cantons_complets/cantons_complets.gpkg",
     quiet = TRUE
   ) |>
-    filter(code_insee_du_departement == code_dept_vers_ade(code_dept))
+    filter(code_insee_du_departement == code_dept_ade)
   
   # Intersection différentiel IGN × cantons
   diff_inter   <- st_intersection(diff_ign, cantons_dept)
@@ -108,9 +125,9 @@ analyser_cs_us <- function(code_dept) {
   return(paste("✅ Département", code_dept, "CS×US terminé"))
 }
 
-# === EXÉCUTION SUR LES DÉPARTEMENTS PILOTES ===
+# === EXÉCUTION ===
 
 if (!exists("run_all_active")) {
-  resultats <- map(dpt_pilotes, masker_departement)
+  resultats <- map(dpt_pilotes, analyser_cs_us)
   walk(resultats, message)
 }

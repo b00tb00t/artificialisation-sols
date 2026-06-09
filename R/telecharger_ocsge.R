@@ -2,9 +2,11 @@
 # telecharger_ocsge.R — Téléchargement automatique des données OCS GE
 # Tente chaque année de 2016 à 2023 par département
 # S'arrête après 2 millésimes trouvés
+# Télécharge également les fichiers différentiels DIFF
 # =============================================================================
 
 source("R/config.R")
+source("R/00_fonctions.R")
 
 library(httr)
 library(archive)
@@ -21,15 +23,8 @@ library(dplyr)
 depts_numeriques <- as.character(c(1:19, 21:95))
 tous_depts       <- c(depts_numeriques, "2A", "2B")
 
-# Années à tester
-annees_a_tester  <- 2016:2023
-
-# URL pattern
-url_pattern <- paste0(
-  "https://data.geopf.fr/telechargement/download/OCSGE/",
-  "OCS-GE_2-0__GPKG_LAMB93_D{dept}_{annee}-01-01/",
-  "OCS-GE_2-0__GPKG_LAMB93_D{dept}_{annee}-01-01.7z"
-)
+# Années à tester pour les millésimes
+annees_a_tester <- 2016:2023
 
 # Log téléchargements
 log_dl_path <- "data/outputs/log_telechargements.csv"
@@ -43,7 +38,7 @@ log_dl <- tibble(
 )
 
 if (file.exists(log_dl_path)) {
-  log_dl <- read_csv(log_dl_path, 
+  log_dl <- read_csv(log_dl_path,
                      show_col_types = FALSE,
                      col_types = cols(
                        code_dept = col_character(),
@@ -66,18 +61,17 @@ logger_dl <- function(code_dept, annee, statut, fichier = "") {
 }
 
 # =============================================================================
-# === FONCTION TÉLÉCHARGEMENT D'UN DÉPARTEMENT ===
+# === FONCTION TÉLÉCHARGEMENT MILLÉSIMES ===
 # =============================================================================
 
 telecharger_departement <- function(code_dept) {
   
   message("\n🔄 Département : ", code_dept)
   
-  # Dossier destination
-  dossier_dest <- file.path(chemin_ocsge, paste0("dep_", code_dept))
+  dossier_dest <- file.path("data/raw/ocsge", paste0("dep_", code_dept))
   dir.create(dossier_dest, recursive = TRUE, showWarnings = FALSE)
   
-  # Vérifier si déjà téléchargé (2 millésimes présents)
+  # Vérifier si déjà téléchargé
   gpkg_existants <- list.files(
     dossier_dest,
     pattern    = "OCCUPATION_SOL\\.gpkg$",
@@ -90,35 +84,35 @@ telecharger_departement <- function(code_dept) {
     return(invisible(NULL))
   }
   
-  # Tenter chaque année
+  # Formater le code département sur 3 caractères pour l'URL
+  dept_url <- str_pad(code_dept, 3, "left", "0")
+  
   millesimes_trouves <- c()
   
   for (annee in annees_a_tester) {
     
-    url <- str_glue(url_pattern, dept = code_dept, annee = annee)
-    
-    # Vérifier si l'URL existe (HEAD request — léger)
-    reponse <- tryCatch(
-      HEAD(url, timeout(10)),
-      error = \(e) NULL
+    url <- str_glue(
+      "https://data.geopf.fr/telechargement/download/OCSGE/",
+      "OCS-GE_2-0__GPKG_LAMB93_D{dept_url}_{annee}-01-01/",
+      "OCS-GE_2-0__GPKG_LAMB93_D{dept_url}_{annee}-01-01.7z"
     )
+    
+    reponse <- tryCatch(HEAD(url, timeout(10)), error = \(e) NULL)
     
     if (is.null(reponse) || status_code(reponse) != 200) {
       message("   ⏭️ ", annee, " — non disponible")
       next
     }
     
-    # Télécharger le fichier
     fichier_7z <- file.path(
       dossier_dest,
-      str_glue("OCS-GE_2-0__GPKG_LAMB93_D{code_dept}_{annee}-01-01.7z")
+      str_glue("OCS-GE_2-0__GPKG_LAMB93_D{dept_url}_{annee}-01-01.7z")
     )
     
     message("   📥 Téléchargement ", annee, "...")
     
     resultat_dl <- tryCatch({
-      GET(url, write_disk(fichier_7z, overwrite = TRUE), timeout(300),
-          progress())
+      GET(url, write_disk(fichier_7z, overwrite = TRUE), timeout(300), progress())
       TRUE
     }, error = \(e) {
       message("   ❌ Erreur téléchargement : ", e$message)
@@ -130,12 +124,11 @@ telecharger_departement <- function(code_dept) {
       next
     }
     
-    # Décompresser
     message("   📦 Décompression ", annee, "...")
     
     resultat_decomp <- tryCatch({
       archive_extract(fichier_7z, dir = dossier_dest)
-      file.remove(fichier_7z)  # supprimer le .7z après extraction
+      file.remove(fichier_7z)
       TRUE
     }, error = \(e) {
       message("   ❌ Erreur décompression : ", e$message)
@@ -151,7 +144,6 @@ telecharger_departement <- function(code_dept) {
     millesimes_trouves <- c(millesimes_trouves, annee)
     message("   ✅ Millésime ", annee, " téléchargé et extrait")
     
-    # Arrêter après 2 millésimes
     if (length(millesimes_trouves) == 2) {
       message("   🎯 2 millésimes trouvés — passage au département suivant")
       break
@@ -167,14 +159,102 @@ telecharger_departement <- function(code_dept) {
 }
 
 # =============================================================================
+# === FONCTION TÉLÉCHARGEMENT DIFF ===
+# =============================================================================
+
+telecharger_diff_departement <- function(code_dept) {
+  
+  message("📥 Recherche DIFF pour département : ", code_dept)
+  
+  chemin_dept <- file.path(chemin_ocsge, paste0("dep_", code_dept))
+  millesimes  <- trouver_millesimes(chemin_dept)
+  annee_A     <- millesimes$annee_A
+  annee_B     <- millesimes$annee_B
+  
+  # Vérifier si déjà téléchargé
+  diff_existant <- list.files(
+    chemin_dept,
+    pattern    = "DIFF.*\\.gpkg$",
+    recursive  = TRUE,
+    full.names = TRUE
+  )
+  
+  if (length(diff_existant) > 0) {
+    message("   ⏭️ DIFF déjà présent")
+    return(invisible(NULL))
+  }
+  
+  # Formater le code département sur 3 caractères pour l'URL
+  dept_url <- str_pad(code_dept, 3, "left", "0")
+  
+  # Dates de publication à tester
+  dates_a_tester <- c(
+    "2024-01-31", "2024-02-28", "2024-03-31", "2024-04-30",
+    "2024-05-31", "2024-06-30", "2024-07-31", "2024-08-31",
+    "2024-09-30", "2024-10-31", "2024-11-30", "2024-12-31",
+    "2025-01-31", "2025-02-28", "2025-03-31", "2025-04-30",
+    "2025-05-31", "2025-06-30"
+  )
+  
+  url_trouvee <- NULL
+  
+  for (date_pub in dates_a_tester) {
+    
+    nom_fichier <- str_glue(
+      "OCS-GE_2-0_DIFF-{annee_A}-{annee_B}_GPKG_LAMB93_D{dept_url}_{date_pub}"
+    )
+    url <- str_glue(
+      "https://data.geopf.fr/telechargement/download/OCSGE/{nom_fichier}/{nom_fichier}.7z"
+    )
+    
+    Sys.sleep(0.5)  # ← éviter le rate limiting IGN
+    
+    reponse <- tryCatch(
+      HEAD(url, timeout(10)),
+      error = \(e) NULL
+    )
+    
+    if (!is.null(reponse) && status_code(reponse) == 200) {
+      message("   ✅ URL trouvée : ", date_pub)
+      url_trouvee <- url
+      nom_trouve  <- nom_fichier
+      break
+    }
+  }
+  
+  if (is.null(url_trouvee)) {
+    message("   ⚠️ DIFF introuvable pour dep", code_dept,
+            " (millésimes ", annee_A, "-", annee_B, ")")
+    return(invisible(NULL))
+  }
+  
+  # Télécharger
+  fichier_7z <- file.path(chemin_dept, paste0(nom_trouve, ".7z"))
+  
+  message("   📥 Téléchargement DIFF...")
+  GET(url_trouvee, write_disk(fichier_7z, overwrite = TRUE),
+      timeout(300), progress())
+  
+  message("   📦 Décompression DIFF...")
+  archive::archive_extract(fichier_7z, dir = chemin_dept)
+  file.remove(fichier_7z)
+  
+  message("   ✅ DIFF téléchargé — dep", code_dept)
+  return(invisible(NULL))
+}
+
+# =============================================================================
 # === EXÉCUTION ===
 # =============================================================================
 
-# Pour les pilotes uniquement — tester avant de lancer le national
-# walk(dpt_pilotes, telecharger_departement)
+# Test millésimes sur un département
+# telecharger_departement("1")
 
-# Pour tous les départements — décommenter quand prêt
-walk(tous_depts, telecharger_departement)
+# Test DIFF sur un département
+# telecharger_diff_departement("3")
 
-message("\n🎉 Téléchargements terminés")
-message("📋 Log → ", log_dl_path)
+# National — millésimes
+# walk(tous_depts, telecharger_departement)
+
+# National — DIFF
+#walk(tous_depts, telecharger_diff_departement)

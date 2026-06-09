@@ -52,10 +52,10 @@ agreger_departement <- function(code_dept) {
   niveau_1_final <- niveau_1 |>
     left_join(aire_totale_canton, by = "code_insee") |>
     mutate(
-      aire_A_ha = aire_A / 10000,
-      aire_B_ha = aire_B / 10000,
-      delta_ha  = delta  / 10000,
-      delta_pct = round(delta / aire_totale_m2 * 100, 2),
+      aire_A_ha = round(aire_A / 10000, 2),
+      aire_B_ha = round(aire_B / 10000, 2),
+      delta_ha  = round(delta  / 10000, 2),
+      delta_pct = round(delta  / aire_totale_m2 * 100, 2),
       annee_A   = millesimes$annee_A,
       annee_B   = millesimes$annee_B
     )
