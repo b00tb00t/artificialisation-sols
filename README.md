@@ -1,15 +1,3 @@
----
-type: 'Page'
-title: readme
-aliases: null
-description: null
-icon: null
-createdAt: '2026-06-11T08:24:14.921Z'
-lastUpdated: '2026-06-11T08:43:19.471Z'
-tags: []
-coverImage: null
----
-
 # Artificialisation des Sols en France
 
 Analyse de l'évolution de l'artificialisation et de la renaturation des sols en France métropolitaine à l'échelle des cantons, à partir des données OCS GE de l'IGN.
