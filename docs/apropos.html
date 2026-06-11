@@ -118,8 +118,24 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Sur cette page</h2>
+   
+  <ul>
+  <li><a href="#le-projet" id="toc-le-projet" class="nav-link active" data-scroll-target="#le-projet">Le projet</a></li>
+  <li><a href="#stack-technique" id="toc-stack-technique" class="nav-link" data-scroll-target="#stack-technique">Stack technique</a>
+  <ul class="collapse">
+  <li><a href="#langages-et-environnement" id="toc-langages-et-environnement" class="nav-link" data-scroll-target="#langages-et-environnement">Langages et environnement</a></li>
+  <li><a href="#packages-r-données-spatiales" id="toc-packages-r-données-spatiales" class="nav-link" data-scroll-target="#packages-r-données-spatiales">Packages R — Données spatiales</a></li>
+  <li><a href="#packages-r-traitement-des-données" id="toc-packages-r-traitement-des-données" class="nav-link" data-scroll-target="#packages-r-traitement-des-données">Packages R — Traitement des données</a></li>
+  <li><a href="#packages-r-visualisation" id="toc-packages-r-visualisation" class="nav-link" data-scroll-target="#packages-r-visualisation">Packages R — Visualisation</a></li>
+  <li><a href="#packages-r-utilitaires" id="toc-packages-r-utilitaires" class="nav-link" data-scroll-target="#packages-r-utilitaires">Packages R — Utilitaires</a></li>
+  </ul></li>
+  <li><a href="#architecture-du-pipeline" id="toc-architecture-du-pipeline" class="nav-link" data-scroll-target="#architecture-du-pipeline">Architecture du pipeline</a></li>
+  <li><a href="#sources-des-données" id="toc-sources-des-données" class="nav-link" data-scroll-target="#sources-des-données">Sources des données</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -143,9 +159,221 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Contenu à venir.</p>
+<section id="le-projet" class="level2">
+<h2 class="anchored" data-anchor-id="le-projet">Le projet</h2>
+<p>Ce projet est un exercice d’apprentissage de R appliqué aux données spatiales et à la cartographie. Plusieurs étapes cruciales sont mise en place : téléchargement, ETL, analyse et publication, le tout dans un format reproductible et documenté. Le tout en utilisant des données open source.</p>
+<p><strong>Il ne constitue pas une analyse officielle de l’artificialisation des sols en France.</strong> Les résultats présentés sont à interpréter avec les nuances détaillées dans la <a href="./methodologie.html">méthodologie</a>.</p>
+<p>Le code source complet est disponible sur <a href="https://github.com">GitHub</a>.</p>
+<hr>
+</section>
+<section id="stack-technique" class="level2">
+<h2 class="anchored" data-anchor-id="stack-technique">Stack technique</h2>
+<section id="langages-et-environnement" class="level3">
+<h3 class="anchored" data-anchor-id="langages-et-environnement">Langages et environnement</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Outil</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>R 4.5</td>
+<td>ETL, analyse, visualisation</td>
+</tr>
+<tr class="even">
+<td>RStudio</td>
+<td>Environnement de développement</td>
+</tr>
+<tr class="odd">
+<td>Quarto</td>
+<td>Documentation et publication</td>
+</tr>
+<tr class="even">
+<td>GitHub / GitHub Pages</td>
+<td>Versionnement et hébergement du site</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="packages-r-données-spatiales" class="level3">
+<h3 class="anchored" data-anchor-id="packages-r-données-spatiales">Packages R — Données spatiales</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 84%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sf</code></td>
+<td>Lecture, manipulation et intersection de données vectorielles</td>
+</tr>
+<tr class="even">
+<td><code>tmap</code> v4</td>
+<td>Cartographie thématique interactive (mode Leaflet)</td>
+</tr>
+<tr class="odd">
+<td><code>classInt</code></td>
+<td>Discrétisation Jenks pour la cartographie choroplèthe</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="packages-r-traitement-des-données" class="level3">
+<h3 class="anchored" data-anchor-id="packages-r-traitement-des-données">Packages R — Traitement des données</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>dplyr</code></td>
+<td>Manipulation et transformation des données tabulaires</td>
+</tr>
+<tr class="even">
+<td><code>tidyr</code></td>
+<td>Restructuration des tableaux (pivot)</td>
+</tr>
+<tr class="odd">
+<td><code>purrr</code></td>
+<td>Itération fonctionnelle sur les 96 départements</td>
+</tr>
+<tr class="even">
+<td><code>stringr</code></td>
+<td>Manipulation de chaînes (extraction d’années, codes département)</td>
+</tr>
+<tr class="odd">
+<td><code>readr</code></td>
+<td>Lecture des fichiers CSV INSEE</td>
+</tr>
+<tr class="even">
+<td><code>lubridate</code></td>
+<td>Gestion des horodatages dans les logs ETL</td>
+</tr>
+<tr class="odd">
+<td><code>DBI</code> / <code>RSQLite</code></td>
+<td>Lecture et écriture des GeoPackages via SQLite</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="packages-r-visualisation" class="level3">
+<h3 class="anchored" data-anchor-id="packages-r-visualisation">Packages R — Visualisation</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ggplot2</code></td>
+<td>Graphiques analytiques</td>
+</tr>
+<tr class="even">
+<td><code>plotly</code></td>
+<td>Conversion ggplot2 en graphiques interactifs</td>
+</tr>
+<tr class="odd">
+<td><code>ggalluvial</code></td>
+<td>Diagrammes de flux alluviaux (devenir des forêts)</td>
+</tr>
+<tr class="even">
+<td><code>htmlwidgets</code></td>
+<td>Sauvegarde des widgets interactifs en HTML</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="packages-r-utilitaires" class="level3">
+<h3 class="anchored" data-anchor-id="packages-r-utilitaires">Packages R — Utilitaires</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>archive</code></td>
+<td>Décompression des archives <code>.7z</code> OCS GE</td>
+</tr>
+<tr class="even">
+<td><code>httr</code></td>
+<td>Requêtes HTTP pour le téléchargement automatique OCS GE</td>
+</tr>
+<tr class="odd">
+<td><code>here</code></td>
+<td>Chemins relatifs à la racine du projet</td>
+</tr>
+<tr class="even">
+<td><code>moments</code></td>
+<td>Calcul de la skewness pour le choix de discrétisation</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="architecture-du-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="architecture-du-pipeline">Architecture du pipeline</h2>
+<p>L’analyse suit une architecture ETL modulaire en scripts numérotés, gérés automatiquement par <code>run_all.R</code> :</p>
+<pre><code>Acquisition        →    Transformation    →    Chargement
+──────────────────      ─────────────────      ──────────────────────
+telecharger_ocsge       03_masking             07_cartes
+decompresser_diff       04_diff                07_cartes_nonlog
+                        05_agregation          08_graphiques
+Mise en place           05b_population
+──────────────────      06_cs_us
+config
+00_fonctions
+02_cantons_complets</code></pre>
+<p>Chaque étape est enregistrée dans <code>data/outputs/log_etl.csv</code> avec timestamp, statut et message d’erreur éventuel.</p>
+<hr>
+</section>
+<section id="sources-des-données" class="level2">
+<h2 class="anchored" data-anchor-id="sources-des-données">Sources des données</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>Produit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>IGN</td>
+<td><a href="https://cartes.gouv.fr/rechercher-une-donnee/dataset/IGNF_OCS-GE">OCS GE NG v2.0</a></td>
+</tr>
+<tr class="even">
+<td>IGN</td>
+<td><a href="https://cartes.gouv.fr/rechercher-une-donnee/dataset/IGNF_ADMIN-EXPRESS">Admin Express COG 2026</a></td>
+</tr>
+<tr class="odd">
+<td>INSEE</td>
+<td><a href="https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_POPULATIONS_HISTORIQUES">Populations historiques</a></td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

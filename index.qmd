@@ -1,5 +1,47 @@
 ---
-title: "Accueil"
+title: "Artificialisation des Sols en France"
 ---
 
-Contenu à venir.
+## Contexte
+
+Définie par la loi Climat et résilience de 2021, l’artificialisation des sols est "l’altération durable de tout ou partie des fonctions écologiques d’un sol, en particulier de ses fonctions biologiques, hydriques et climatiques, ainsi que de son potentiel agronomique par son occupation ou son usage. "
+
+Lorsque des opérations d’aménagement sont réalisées (habitat, activités, commerces, infrastructures, équipements publics…), la structure et la composition des sols sont profondément transformées et dégradées, les habitats naturels sont détruits et fragmentés, les paysages modifiés.
+
+Face à cette réalité, la **loi Climat et Résilience de 2021** a inscrit dans le droit français l'objectif de **Zéro Artificialisation Nette (ZAN) d'ici 2050** : chaque mètre carré artificialisé devra être compensé par la renaturation d'un mètre carré équivalent. Un objectif intermédiaire de réduction de moitié du rythme d'artificialisation est fixé pour 2031 par rapport à la décennie 2011–2021.
+
+Pour suivre et évaluer ces dynamiques, l'IGN produit l'**OCS GE** (Occupation et Classification des Sols Grande Échelle), une base de données nationale décrivant l'occupation et l'usage du sol à grande échelle, disponible pour chaque département français.
+
+------------------------------------------------------------------------
+
+## Objectif du projet
+
+Ce projet analyse l'évolution de l'artificialisation et de la renaturation des sols en **France métropolitaine**, à l'échelle des **cantons**, à partir des données OCS GE de l'IGN.
+
+Il s'inscrit dans un objectif d'apprentissage et d'entraînement de R appliqué aux données spatiales et à la cartographie. **Il ne constitue pas une analyse officielle ou professionnelle.**
+
+Trois axes d'analyse sont développés :
+
+- **Cartographie** : visualisation de l'intensité et de la répartition spatiale de l'artificialisation et de la renaturation par canton.
+- **Typologies** : identification des types de surfaces artificialisées (bâti, imperméable, minéral) et des usages associés (résidentiel, économique).
+- **Corrélations démographiques** : mise en relation de l'évolution de la population et de l'artificialisation à l'échelle cantonale
+
+------------------------------------------------------------------------
+
+## Données sources
+
+| Source | Produit | Rôle dans l'analyse |
+|--------------|------------------------|-------------------------------|
+| IGN | OCS GE NG v2.0 | Occupation du sol par département et par millésime |
+| IGN | Admin Express COG 2026 | Délimitations administratives (cantons, départements, régions) |
+| INSEE | Populations historiques | Évolution démographique par commune |
+
+Les millésimes OCS GE varient selon les départements (entre 2016 et 2023), ce qui implique des périodes d'observation différentes d'un département à l'autre. Cette différence de millésimes est documentée dans la [méthodologie](#0) et dans les popups de chaque carte.
+
+------------------------------------------------------------------------
+
+## Navigation
+
+- [**Méthodologie**](methodologie.qmd) — Sources, définitions, pipeline ETL, choix analytiques et limites
+- [**Résultats**](resultats.qmd) — Cartes et graphiques analytiques
+- [**À propos**](apropos.qmd) — Stack technique et informations sur le projet

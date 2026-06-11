@@ -2,4 +2,92 @@
 title: "À propos"
 ---
 
-Contenu à venir.
+## Le projet
+
+Ce projet est un exercice d'apprentissage de R appliqué aux données spatiales et à la cartographie. Plusieurs étapes cruciales sont mise en place : téléchargement, ETL, analyse et publication, le tout dans un format reproductible et documenté. Le tout en utilisant des données open source.
+
+**Il ne constitue pas une analyse officielle de l'artificialisation des sols en France.** Les résultats présentés sont à interpréter avec les nuances détaillées dans la [méthodologie](methodologie.qmd).
+
+Le code source complet est disponible sur [GitHub](https://github.com).
+
+------------------------------------------------------------------------
+
+## Stack technique
+
+### Langages et environnement
+
+| Outil                 | Usage                                |
+|-----------------------|--------------------------------------|
+| R 4.5                 | ETL, analyse, visualisation          |
+| RStudio               | Environnement de développement       |
+| Quarto                | Documentation et publication         |
+| GitHub / GitHub Pages | Versionnement et hébergement du site |
+
+### Packages R — Données spatiales
+
+| Package    | Usage                                                         |
+|------------|---------------------------------------------------------------|
+| `sf`       | Lecture, manipulation et intersection de données vectorielles |
+| `tmap` v4  | Cartographie thématique interactive (mode Leaflet)            |
+| `classInt` | Discrétisation Jenks pour la cartographie choroplèthe         |
+
+### Packages R — Traitement des données
+
+| Package | Usage |
+|------------------------------------|------------------------------------|
+| `dplyr` | Manipulation et transformation des données tabulaires |
+| `tidyr` | Restructuration des tableaux (pivot) |
+| `purrr` | Itération fonctionnelle sur les 96 départements |
+| `stringr` | Manipulation de chaînes (extraction d'années, codes département) |
+| `readr` | Lecture des fichiers CSV INSEE |
+| `lubridate` | Gestion des horodatages dans les logs ETL |
+| `DBI` / `RSQLite` | Lecture et écriture des GeoPackages via SQLite |
+
+### Packages R — Visualisation
+
+| Package       | Usage                                             |
+|---------------|---------------------------------------------------|
+| `ggplot2`     | Graphiques analytiques                            |
+| `plotly`      | Conversion ggplot2 en graphiques interactifs      |
+| `ggalluvial`  | Diagrammes de flux alluviaux (devenir des forêts) |
+| `htmlwidgets` | Sauvegarde des widgets interactifs en HTML        |
+
+### Packages R — Utilitaires
+
+| Package   | Usage                                                   |
+|-----------|---------------------------------------------------------|
+| `archive` | Décompression des archives `.7z` OCS GE                 |
+| `httr`    | Requêtes HTTP pour le téléchargement automatique OCS GE |
+| `here`    | Chemins relatifs à la racine du projet                  |
+| `moments` | Calcul de la skewness pour le choix de discrétisation   |
+
+------------------------------------------------------------------------
+
+## Architecture du pipeline
+
+L'analyse suit une architecture ETL modulaire en scripts numérotés, gérés automatiquement par `run_all.R` :
+
+```         
+Acquisition        →    Transformation    →    Chargement
+──────────────────      ─────────────────      ──────────────────────
+telecharger_ocsge       03_masking             07_cartes
+decompresser_diff       04_diff                07_cartes_nonlog
+                        05_agregation          08_graphiques
+Mise en place           05b_population
+──────────────────      06_cs_us
+config
+00_fonctions
+02_cantons_complets
+```
+
+Chaque étape est enregistrée dans `data/outputs/log_etl.csv` avec timestamp, statut et message d'erreur éventuel.
+
+------------------------------------------------------------------------
+
+## Sources des données
+
+| Source | Produit |
+|----------------|------------------------|
+| IGN | [OCS GE NG v2.0](https://cartes.gouv.fr/rechercher-une-donnee/dataset/IGNF_OCS-GE) |
+| IGN | [Admin Express COG 2026](https://cartes.gouv.fr/rechercher-une-donnee/dataset/IGNF_ADMIN-EXPRESS) |
+| INSEE | [Populations historiques](https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_POPULATIONS_HISTORIQUES) |

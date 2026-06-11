@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Accueil – Artificialisation des Sols en France</title>
+<title>Artificialisation des Sols en France</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -118,15 +118,24 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Sur cette page</h2>
+   
+  <ul>
+  <li><a href="#contexte" id="toc-contexte" class="nav-link active" data-scroll-target="#contexte">Contexte</a></li>
+  <li><a href="#objectif-du-projet" id="toc-objectif-du-projet" class="nav-link" data-scroll-target="#objectif-du-projet">Objectif du projet</a></li>
+  <li><a href="#données-sources" id="toc-données-sources" class="nav-link" data-scroll-target="#données-sources">Données sources</a></li>
+  <li><a href="#navigation" id="toc-navigation" class="nav-link" data-scroll-target="#navigation">Navigation</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Accueil</h1>
+<h1 class="title">Artificialisation des Sols en France</h1>
 </div>
 
 
@@ -143,9 +152,72 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Contenu à venir.</p>
+<section id="contexte" class="level2">
+<h2 class="anchored" data-anchor-id="contexte">Contexte</h2>
+<p>Définie par la loi Climat et résilience de 2021, l’artificialisation des sols est “l’altération durable de tout ou partie des fonctions écologiques d’un sol, en particulier de ses fonctions biologiques, hydriques et climatiques, ainsi que de son potentiel agronomique par son occupation ou son usage.”</p>
+<p>Lorsque des opérations d’aménagement sont réalisées (habitat, activités, commerces, infrastructures, équipements publics…), la structure et la composition des sols sont profondément transformées et dégradées, les habitats naturels sont détruits et fragmentés, les paysages modifiés.</p>
+<p>Face à cette réalité, la <strong>loi Climat et Résilience de 2021</strong> a inscrit dans le droit français l’objectif de <strong>Zéro Artificialisation Nette (ZAN) d’ici 2050</strong> : chaque mètre carré artificialisé devra être compensé par la renaturation d’un mètre carré équivalent. Un objectif intermédiaire de réduction de moitié du rythme d’artificialisation est fixé pour 2031 par rapport à la décennie 2011–2021.</p>
+<p>Pour suivre et évaluer ces dynamiques, l’IGN produit l’<strong>OCS GE</strong> (Occupation et Classification des Sols Grande Échelle), une base de données nationale décrivant l’occupation et l’usage du sol à grande échelle, disponible pour chaque département français.</p>
+<hr>
+</section>
+<section id="objectif-du-projet" class="level2">
+<h2 class="anchored" data-anchor-id="objectif-du-projet">Objectif du projet</h2>
+<p>Ce projet analyse l’évolution de l’artificialisation et de la renaturation des sols en <strong>France métropolitaine</strong>, à l’échelle des <strong>cantons</strong>, à partir des données OCS GE de l’IGN.</p>
+<p>Il s’inscrit dans un objectif d’apprentissage et d’entraînement de R appliqué aux données spatiales et à la cartographie. <strong>Il ne constitue pas une analyse officielle ou professionnelle.</strong></p>
+<p>Trois axes d’analyse sont développés :</p>
+<ul>
+<li><strong>Cartographie</strong> : visualisation de l’intensité et de la répartition spatiale de l’artificialisation et de la renaturation par canton.</li>
+<li><strong>Typologies</strong> : identification des types de surfaces artificialisées (bâti, imperméable, minéral) et des usages associés (résidentiel, économique).</li>
+<li><strong>Corrélations démographiques</strong> : mise en relation de l’évolution de la population et de l’artificialisation à l’échelle cantonale</li>
+</ul>
+<hr>
+</section>
+<section id="données-sources" class="level2">
+<h2 class="anchored" data-anchor-id="données-sources">Données sources</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 34%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>Produit</th>
+<th>Rôle dans l’analyse</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>IGN</td>
+<td>OCS GE NG v2.0</td>
+<td>Occupation du sol par département et par millésime</td>
+</tr>
+<tr class="even">
+<td>IGN</td>
+<td>Admin Express COG 2026</td>
+<td>Délimitations administratives (cantons, départements, régions)</td>
+</tr>
+<tr class="odd">
+<td>INSEE</td>
+<td>Populations historiques</td>
+<td>Évolution démographique par commune</td>
+</tr>
+</tbody>
+</table>
+<p>Les millésimes OCS GE varient selon les départements (entre 2016 et 2023), ce qui implique des périodes d’observation différentes d’un département à l’autre. Cette différence de millésimes est documentée dans la <a href="#0">méthodologie</a> et dans les popups de chaque carte.</p>
+<hr>
+</section>
+<section id="navigation" class="level2">
+<h2 class="anchored" data-anchor-id="navigation">Navigation</h2>
+<ul>
+<li><a href="./methodologie.html"><strong>Méthodologie</strong></a> — Sources, définitions, pipeline ETL, choix analytiques et limites</li>
+<li><a href="./resultats.html"><strong>Résultats</strong></a> — Cartes et graphiques analytiques</li>
+<li><a href="./apropos.html"><strong>À propos</strong></a> — Stack technique et informations sur le projet</li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
