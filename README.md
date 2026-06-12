@@ -2,7 +2,9 @@
 
 Analyse de l'évolution de l'artificialisation et de la renaturation des sols en France métropolitaine à l'échelle des cantons, à partir des données OCS GE de l'IGN.
 
-> **Projet d'entraînement R** — GIS, cartographie thématique, publication Quarto. Cette analyse n'a pas vocation à constituer une étude officielle.
+> **Projet d'entraînement R** ⚠️ Cette analyse n'a pas vocation à constituer une étude officielle. Ceci est un projet d'entraînement sur R ⚠️
+
+### 👉 Tous les détails du projet ainsi que la visualisation des résultats [sont disponibles ici.](https://ziiiipr.github.io/artificialisation-sols/)
 
 ---
 
